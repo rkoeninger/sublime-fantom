@@ -12,10 +12,6 @@
 	<array>
 		<dict>
 			<key>include</key>
-			<string>#protoype</string>
-		</dict>
-		<dict>
-			<key>include</key>
 			<string>#main</string>
 		</dict>
 	</array>
@@ -47,7 +43,7 @@
 					<key>begin</key>
 					<string>(")</string>
 					<key>end</key>
-					<string>([^\\]")</string>
+					<string>(")</string>
 					<key>name</key>
 					<string>string.quoted.double.fan</string>
 					<key>patterns</key>
@@ -63,10 +59,6 @@
 						<dict>
 							<key>include</key>
 							<string>#interpolation</string>
-						</dict>
-						<dict>
-							<key>include</key>
-							<string>#locale-literal</string>
 						</dict>
 					</array>
 				</dict>
@@ -114,7 +106,7 @@
 			<array>
 				<dict>
 					<key>match</key>
-					<string>(^\s*\*\*.*)</string>
+					<string>(^\s*\*\*.*$)</string>
 					<key>name</key>
 					<string>comment.line.fandoc.fan</string>
 				</dict>
@@ -132,7 +124,7 @@
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>(\$({{ident}}(\.{{ident}})*))</string>
+					<string>(\$([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*))</string>
 					<key>name</key>
 					<string>variable.other.interpolated-dotcall.fan</string>
 				</dict>
@@ -216,27 +208,9 @@
 			<array>
 				<dict>
 					<key>match</key>
-					<string>((//).*)</string>
+					<string>((//).*$)</string>
 					<key>name</key>
 					<string>comment.line.double-slash.fan</string>
-				</dict>
-			</array>
-		</dict>
-		<key>locale-literal</key>
-		<dict>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>match</key>
-					<string>(\$\&lt;.+?\&gt;)</string>
-					<key>name</key>
-					<string>variable.other.locale-literal.fan</string>
-				</dict>
-				<dict>
-					<key>match</key>
-					<string>(\$\&lt;\w*)</string>
-					<key>name</key>
-					<string>invalid.illegal.locale-literal.fan</string>
 				</dict>
 			</array>
 		</dict>
@@ -244,6 +218,10 @@
 		<dict>
 			<key>patterns</key>
 			<array>
+				<dict>
+					<key>include</key>
+					<string>#comments</string>
+				</dict>
 				<dict>
 					<key>include</key>
 					<string>#strings</string>
@@ -290,7 +268,7 @@
 			<array>
 				<dict>
 					<key>match</key>
-					<string>('\b0x[0-9A-Fa-f][_0-9A-Fa-f]*')</string>
+					<string>(\b0x[0-9A-Fa-f][_0-9A-Fa-f]*)</string>
 					<key>name</key>
 					<string>constant.numeric.hex.fan</string>
 				</dict>
@@ -302,13 +280,13 @@
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>('\\u[0-9A-Fa-f]{4}')</string>
+					<string>(\\u[0-9A-Fa-f]{4})</string>
 					<key>name</key>
 					<string>constant.numeric.escape.unicode.fan</string>
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>('\\(u[0-9A-Fa-f]{0,3})?')</string>
+					<string>(\\(u[0-9A-Fa-f]{0,3})?)</string>
 					<key>name</key>
 					<string>invalid.illegal.escape.unicode.fan</string>
 				</dict>
@@ -326,13 +304,13 @@
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>('{{number}}(ns|ms|sec|min|hr|day)')</string>
+					<string>((\B\.[0-9][0-9_]*|\b[0-9][0-9_]*(\.[0-9][0-9_]*)?)([eE][-+]?[0-9][0-9_]*)?(ns|ms|sec|min|hr|day))</string>
 					<key>name</key>
 					<string>constant.other.duration.fan</string>
 				</dict>
 				<dict>
 					<key>match</key>
-					<string>('{{number}}[fdFD]?')</string>
+					<string>((\B\.[0-9][0-9_]*|\b[0-9][0-9_]*(\.[0-9][0-9_]*)?)([eE][-+]?[0-9][0-9_]*)?[fdFD]?)</string>
 					<key>name</key>
 					<string>constant.numeric.number.fan</string>
 				</dict>
@@ -410,16 +388,6 @@
 				</dict>
 			</array>
 		</dict>
-		<key>prototype</key>
-		<dict>
-			<key>patterns</key>
-			<array>
-				<dict>
-					<key>include</key>
-					<string>#comments</string>
-				</dict>
-			</array>
-		</dict>
 		<key>string-dsl</key>
 		<dict>
 			<key>patterns</key>
@@ -491,34 +459,22 @@
 							<key>include</key>
 							<string>#interpolation</string>
 						</dict>
-						<dict>
-							<key>include</key>
-							<string>#locale-literal</string>
-						</dict>
 					</array>
 				</dict>
 			</array>
 		</dict>
 		<key>typedef</key>
-		<array>
-			<dict>
-				<key>captures</key>
+		<dict>
+			<key>patterns</key>
+			<array>
 				<dict>
-					<key>1</key>
-					<dict>
-						<key>name</key>
-						<string>storage.modifier.fan</string>
-					</dict>
-					<key>2</key>
-					<dict>
-						<key>name</key>
-						<string>meta.type.fan</string>
-					</dict>
+					<key>match</key>
+					<string>(class|mixin)(?=\s+([A-Za-z_][A-Za-z0-9_]*))</string>
+					<key>name</key>
+					<string>storage.modifier.fan</string>
 				</dict>
-				<key>match</key>
-				<string>(class|mixin)\s+({{ident}})</string>
-			</dict>
-		</array>
+			</array>
+		</dict>
 		<key>uris</key>
 		<dict>
 			<key>patterns</key>
@@ -551,5 +507,7 @@
 	</dict>
 	<key>scopeName</key>
 	<string>source.fan</string>
+	<key>uuid</key>
+	<string>de0743d9-c48e-44a0-a28b-6003d88f09d0</string>
 </dict>
 </plist>

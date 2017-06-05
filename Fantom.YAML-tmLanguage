@@ -1,18 +1,25 @@
 # [PackageDev] target_format: plist, ext: tmLanguage
 ---
+
 name: Fantom
 fileTypes: [fan]
 scopeName: source.fan
+uuid: de0743d9-c48e-44a0-a28b-6003d88f09d0
 
 patterns:
-- include: '#protoype'
 - include: '#main'
 
 repository:
 
-  prototype:
+  main:
     patterns:
     - include: '#comments'
+    - include: '#strings'
+    - include: '#uris'
+    - include: '#numbers'
+    - include: '#keywords'
+    - include: '#operators'
+    - include: '#typedef'
 
   comments:
     patterns:
@@ -23,12 +30,12 @@ repository:
   line-comment:
     patterns:
     - name: comment.line.double-slash.fan
-      match: ((//).*)
+      match: ((//).*$)
 
   fandoc-comment:
     patterns:
     - name: comment.line.fandoc.fan
-      match: (^\s*\*\*.*)
+      match: (^\s*\*\*.*$)
 
   multiline-comment:
     patterns:
@@ -36,20 +43,10 @@ repository:
       begin: (/\*)
       end: (\*/)
 
-  main:
-    patterns:
-    - include: '#strings'
-    - include: '#uris'
-    - include: '#numbers'
-    - include: '#keywords'
-    - include: '#operators'
-    - include: '#typedef'
-
   typedef:
-    - match: (class|mixin)\s+({{ident}})
-      captures:
-        '1': {name: storage.modifier.fan}
-        '2': {name: meta.type.fan}
+    patterns:
+    - name: storage.modifier.fan
+      match: (class|mixin)(?=\s+([A-Za-z_][A-Za-z0-9_]*))
 
   strings:
     patterns:
@@ -61,12 +58,11 @@ repository:
     patterns:
     - name: string.quoted.double.fan
       begin: (")
-      end: ([^\\]")
+      end: (")
       patterns:
       - include: '#escaped-unicode'
       - include: '#escaped-char'
       - include: '#interpolation'
-      - include: '#locale-literal'
 
   triple-quoted-string:
     patterns:
@@ -79,7 +75,6 @@ repository:
       - include: '#escaped-unicode'
       - include: '#escaped-char'
       - include: '#interpolation'
-      - include: '#locale-literal'
 
   string-dsl:
     patterns:
@@ -108,16 +103,9 @@ repository:
     - name: variable.other.interpolated-expr.fan
       match: (\$\{.+?\})
     - name: variable.other.interpolated-dotcall.fan
-      match: (\$({{ident}}(\.{{ident}})*))
+      match: (\$([A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)*))
     - name: invalid.illegal.interpolation.fan
       match: (\$\{\w*)
-
-  locale-literal:
-    patterns:
-    - name: variable.other.locale-literal.fan
-      match: (\$\<.+?\>)
-    - name: invalid.illegal.locale-literal.fan
-      match: (\$\<\w*)
 
   uris:
     patterns:
@@ -132,21 +120,21 @@ repository:
   numbers:
     patterns:
     - name: constant.numeric.hex.fan
-      match: ('\b0x[0-9A-Fa-f][_0-9A-Fa-f]*')
+      match: (\b0x[0-9A-Fa-f][_0-9A-Fa-f]*)
     - name: invalid.illegal.hex.fan
       match: (0x)
     - name: constant.numeric.escape.unicode.fan
-      match: ('\\u[0-9A-Fa-f]{4}')
+      match: (\\u[0-9A-Fa-f]{4})
     - name: invalid.illegal.escape.unicode.fan
-      match: ('\\(u[0-9A-Fa-f]{0,3})?')
+      match: (\\(u[0-9A-Fa-f]{0,3})?)
     - name: constant.numeric.escape.char.fan
       match: (\'\\[bfnrt"'$\\]\')
     - name: constant.numeric.char.fan
       match: (\'[^\\]\')
     - name: constant.other.duration.fan
-      match: ('{{number}}(ns|ms|sec|min|hr|day)')
+      match: ((\B\.[0-9][0-9_]*|\b[0-9][0-9_]*(\.[0-9][0-9_]*)?)([eE][-+]?[0-9][0-9_]*)?(ns|ms|sec|min|hr|day))
     - name: constant.numeric.number.fan
-      match: ('{{number}}[fdFD]?')
+      match: ((\B\.[0-9][0-9_]*|\b[0-9][0-9_]*(\.[0-9][0-9_]*)?)([eE][-+]?[0-9][0-9_]*)?[fdFD]?)
 
   keywords:
     patterns:
@@ -196,3 +184,4 @@ repository:
     - name: punctuation.terminator.fan
       match: (;)
 
+...
